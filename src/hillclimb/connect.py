@@ -128,6 +128,8 @@ def parse_claude_status(returncode: int, stdout: str) -> tuple[bool, str]:
         # older CLIs have no `auth status`; the text is the best evidence left
         text = (stdout or "").strip().splitlines()
         first = text[0][:120] if text else ""
+        if os.environ.get("HILLCLIMB_SKIP_AUTH_CHECK") == "1":
+            return True, "auth check skipped (HILLCLIMB_SKIP_AUTH_CHECK=1)"
         if returncode == 0 and "not logged in" not in (stdout or "").lower():
             return True, first or "logged in"
         return False, first or "not logged in"
